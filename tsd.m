@@ -22,7 +22,7 @@ function [K1,K2,delta1,delta2]=tsd(A,B,C,Aa,Ba,poles,T,algorithm);
 [q,m]=size(Ba);
 Ad=[A zeros(n,q);Ba*C Aa];
 Bd=[B;zeros(q,p)];
-if strcmp(algorithm ,'rfbg')
+if strcmp(algorithm ,'rfbg_orig') | strcmp(algorithm,'rfbg')
     eval(strcat('[Kd,delta1,delta2]=',algorithm,'(Ad,Bd,poles,T);'))
     K1=Kd(:,1:n);
     K2=Kd(:,n+1:n+q);  
@@ -32,9 +32,9 @@ elseif strcmp(algorithm ,'place') | strcmp(algorithm ,'fbg')
     K2=Kd(:,n+1:n+q);
     [n,p]=size(B);
 D1=zeros(p,p);
-    sys=ss(Ad-Bd*Kd,Bd,Kd,D1,T);
-    delta1=1/norm(sys,inf);
-    sys=ss(Ad-Bd*Kd,Bd,-Kd,eye(p),T);
-    delta2=1/norm(sys,inf);
+    sys1=ss(Ad-Bd*Kd,Bd,Kd,D1,T);
+    delta1=1/norm(sys1,inf);
+    sys2=ss(Ad-Bd*Kd,Bd,-Kd,eye(p),T);
+    delta2=1/norm(sys2,inf);
 end
 return
